@@ -90,7 +90,7 @@ def add_entry():
     new_entry = Entry(
         product_id=data['product_id'],
         quantity=data['quantity'],
-        date_time=datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),
+        date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),
         location=data['location']
     )
     db.session.add(new_entry)
@@ -104,7 +104,7 @@ def add_exit():
     new_exit = Exit(
         product_id=data['product_id'],  # Associa a saída ao produto pelo ID
         quantity=data['quantity'],  # Quantidade de produtos saindo do estoque
-        date_time=datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),  # Converte data para datetime
+        date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),  # Converte data para datetime
         location=data['location']
     )
     db.session.add(new_exit)
@@ -133,6 +133,10 @@ def generate_report():
     for exit in exits:
         pdf.cell(200, 10, txt=f"ID Produto: {exit.product_id} | Quantidade: {exit.quantity} | Data: {exit.date_time} | Local: {exit.location}", ln=True)
     
-    pdf.output("report.pdf")  # Salva o PDF gerado
-    return send_file("report.pdf", as_attachment=True)  # Envia o PDF como resposta
+    format = '%Y-%m-%d %H_%M_%S'
+    now = datetime.date.today().strftime(format)
+    reportPath = "reports/Entry and Exits Report "+now+".pdf"
+    #return jsonify({"message": reportPath}), 201
+    pdf.output(reportPath)  # Salva o PDF gerado
+    return send_file(reportPath, as_attachment=True)  # Envia o PDF como resposta
 
