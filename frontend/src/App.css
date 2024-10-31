@@ -13,8 +13,12 @@
   }
 }
 
-.bg-ms{
+.bg-ms-blue{
   background-color: #1f879d;
+}
+
+.bg-ms-dark{
+  background-color: #3f3f3f;
 }
 
 .App-header {
@@ -30,12 +34,28 @@
 .App-link {
   color: #61dafb;
 }
+/* Estilo para tabelas com bordas arredondadas */
+.table-rounded {   
+    border-radius: 0.5rem; /* Define o arredondamento */
+    overflow: hidden; /* Para evitar que o conteúdo ultrapasse os cantos arredondados */
+}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.table-rounded thead th:first-child {
+    border-top-left-radius: 0.5rem;
+}
+
+.table-rounded thead th:last-child {
+    border-top-right-radius: 0.5rem;
+}
+
+.table-rounded tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+}
+
+.table-rounded tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+}
+
+.btn:hover{
+  background-color: #3ba3c0 !important;
 }

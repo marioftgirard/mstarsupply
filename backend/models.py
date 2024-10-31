@@ -13,6 +13,13 @@ class Product(db.Model):
     type = db.Column(db.String(50))  # Tipo do produto
     description = db.Column(db.Text)  # Descrição detalhada do produto
 
+# Modelo para a tabela 'locations' que guarda as informações sobre os locais de armazenamento
+class Location(db.Model):
+    __tablename__ = 'locations'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)  # Nome do local
+    description = db.Column(db.Text)  # Descrição do local
+
 # Modelo para a tabela 'entries' que armazena as entradas de estoque de cada produto
 class Entry(db.Model):
     __tablename__ = 'entries'
@@ -20,7 +27,7 @@ class Entry(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)  # ID do produto relacionado
     quantity = db.Column(db.Integer, nullable=False)  # Quantidade de produtos entrando no estoque
     date_time = db.Column(db.DateTime)  # Data e hora da entrada
-    location = db.Column(db.String(255))  # Local da entrada
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)  # ID do local relacionado
 
 # Modelo para a tabela 'exits' que armazena as saídas de estoque de cada produto
 class Exit(db.Model):
@@ -29,4 +36,4 @@ class Exit(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)  # ID do produto relacionado
     quantity = db.Column(db.Integer, nullable=False)  # Quantidade de produtos saindo do estoque
     date_time = db.Column(db.DateTime)  # Data e hora da saída
-    location = db.Column(db.String(255))  # Local da saída
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)  # ID do local relacionado

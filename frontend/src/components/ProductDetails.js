@@ -32,7 +32,7 @@ const ProductDetails = ({ productId, onBack }) => {
     }
 
     return (
-        <Card className="bg-dark text-light p-4" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '600px', margin: '0 auto' }}>
             <Card.Body>
                 <Card.Title className="text-center mb-4">{product.name}</Card.Title>
                 <Card.Text>
@@ -47,7 +47,7 @@ const ProductDetails = ({ productId, onBack }) => {
                 <Card.Text>
                     <strong>Descrição:</strong> {product.description || 'N/A'}
                 </Card.Text>
-                <Button variant="secondary" onClick={onBack} className="mt-4 w-100">
+                <Button variant="btn bg-ms-blue text-light" onClick={onBack} className="mt-4 w-100">
                     Voltar para a Lista de Produtos
                 </Button>
             </Card.Body>

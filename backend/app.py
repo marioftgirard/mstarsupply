@@ -1,16 +1,16 @@
 import datetime
+import os
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from fpdf import FPDF
 from config import Config
-from models import db, Product, Entry, Exit
+from models import db, Product, Entry, Exit,Location
 
-app = Flask(__name__)
 
 app = Flask(__name__)
 app.config.from_object(Config)  # Carrega as configurações do banco de dados
 db.init_app(app)  # Inicializa o SQLAlchemy com a configuração do app
-CORS(app)
+CORS(app) #Lida com o Cross-origin Resource Sharing  
 
 # Contexto de inicialização do banco de dados
 with app.app_context():
@@ -91,7 +91,7 @@ def add_entry():
         product_id=data['product_id'],
         quantity=data['quantity'],
         date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),
-        location=data['location']
+        location_id=data['location_id']
     )
     db.session.add(new_entry)
     db.session.commit()
@@ -105,38 +105,111 @@ def add_exit():
         product_id=data['product_id'],  # Associa a saída ao produto pelo ID
         quantity=data['quantity'],  # Quantidade de produtos saindo do estoque
         date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),  # Converte data para datetime
-        location=data['location']
+        location_id=data['location_id']
     )
     db.session.add(new_exit)
     db.session.commit()
     return jsonify({"message": "Saída registrada com sucesso"}), 201
+
+
+# CREATE - criar um novo local de armazenamento
+@app.route('/api/locations', methods=['POST'])
+def add_location():
+    data = request.json
+    new_location = Location(
+        name=data.get('name'),
+        description=data.get('description')
+    )
+    db.session.add(new_location)
+    db.session.commit()
+    return jsonify({"message": "Local de armazenamento adicionado com sucesso"}), 201
+
+# LIST - Obter lista de todos os locais de armazenamento
+@app.route('/api/locations', methods=['GET'])
+def get_locations():
+    locations = Location.query.all()
+    location_list = [
+        {
+            "id": location.id,
+            "name": location.name,
+            "description": location.description
+        } for location in locations
+    ]
+    return jsonify(location_list), 200
+
+# READ - Obter um único local de armazenamento pelo ID
+@app.route('/api/locations/<int:location_id>', methods=['GET'])
+def get_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    return jsonify({
+        "id": location.id,
+        "name": location.name,
+        "description": location.description
+    }), 200
+
+# UPDATE - Atualizar um local de armazenamento pelo ID
+@app.route('/api/locations/<int:location_id>', methods=['PUT'])
+def update_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    data = request.json
+
+    location.name = data.get('name', location.name)
+    location.description = data.get('description', location.description)
+
+    db.session.commit()
+    return jsonify({"message": "Local de armazenamento atualizado com sucesso"}), 200
+
+# DELETE - Excluir um local de armazenamento pelo ID
+@app.route('/api/locations/<int:location_id>', methods=['DELETE'])
+def delete_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    db.session.delete(location)
+    db.session.commit()
+    return jsonify({"message": "Local de armazenamento excluído com sucesso"})
 
 # Rota para gerar um relatório PDF com todas as entradas e saídas
 @app.route('/api/report', methods=['GET'])
 def generate_report():
     entries = Entry.query.all()  # Obtém todas as entradas do banco
     exits = Exit.query.all()  # Obtém todas as saídas do banco
-    
+
     # Cria um novo PDF usando FPDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     pdf.cell(200, 10, txt="Relatório de Movimentação de Mercadorias", ln=True, align="C")
-    
+    pdf.cell(200, 10, txt=" ", ln=True)  # Linha em branco para espaçamento
+
     # Adiciona as entradas ao relatório PDF
-    pdf.cell(200, 10, txt="Entradas", ln=True, align="L")
+    pdf.cell(200, 10, txt="Entradas:", ln=True, align="L")
     for entry in entries:
-        pdf.cell(200, 10, txt=f"ID Produto: {entry.product_id} | Quantidade: {entry.quantity} | Data: {entry.date_time} | Local: {entry.location}", ln=True)
-    
+        pdf.cell(
+            200, 10,
+            txt=f"Produto ID: {entry.product_id} | Quantidade: {entry.quantity} | Data: {entry.date_time.strftime('%Y-%m-%d %H:%M:%S')} | Local: {entry.location_id}",
+            ln=True
+        )
+
     # Adiciona as saídas ao relatório PDF
-    pdf.cell(200, 10, txt="Saídas", ln=True, align="L")
+    pdf.cell(200, 10, txt=" ", ln=True)  # Linha em branco para espaçamento
+    pdf.cell(200, 10, txt="Saídas:", ln=True, align="L")
     for exit in exits:
-        pdf.cell(200, 10, txt=f"ID Produto: {exit.product_id} | Quantidade: {exit.quantity} | Data: {exit.date_time} | Local: {exit.location}", ln=True)
-    
-    format = '%Y-%m-%d %H_%M_%S'
-    now = datetime.date.today().strftime(format)
-    reportPath = "reports/Entry and Exits Report "+now+".pdf"
-    #return jsonify({"message": reportPath}), 201
-    pdf.output(reportPath)  # Salva o PDF gerado
-    return send_file(reportPath, as_attachment=True)  # Envia o PDF como resposta
+        pdf.cell(
+            200, 10,
+            txt=f"Produto ID: {exit.product_id} | Quantidade: {exit.quantity} | Data: {exit.date_time.strftime('%Y-%m-%d %H:%M:%S')} | Local: {exit.location_id}",
+            ln=True
+        )
+
+    # Gera um nome de arquivo único com data e hora
+    now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    report_path = f"reports/Entry_and_Exits_Report_{now}.pdf"
+
+    # Garante que o diretório 'reports' existe
+    os.makedirs(os.path.dirname(report_path), exist_ok=True)
+
+    # Salva o PDF gerado no diretório especificado
+    pdf.output(report_path)
+
+    # Retorna o PDF como um arquivo para download
+    return send_file(report_path, as_attachment=True)
+# Rota para obter todas as movimentações de produtos (entradas e saídas) em ordem crescente de data
 

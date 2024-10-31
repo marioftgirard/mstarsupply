@@ -34,7 +34,7 @@ const ProductForm = ({ productId, onSave }) => {
     };
 
     return (
-        <Card className="bg-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
+        <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
             <Card.Body>
                 <Card.Title className="text-center mb-4">
                     {productId ? 'Editar Produto' : 'Adicionar Produto'}
@@ -49,7 +49,7 @@ const ProductForm = ({ productId, onSave }) => {
                             onChange={handleChange}
                             placeholder="Nome do Produto"
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -62,7 +62,7 @@ const ProductForm = ({ productId, onSave }) => {
                             onChange={handleChange}
                             placeholder="Número de Registro"
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -74,7 +74,7 @@ const ProductForm = ({ productId, onSave }) => {
                             value={form.manufacturer}
                             onChange={handleChange}
                             placeholder="Fabricante"
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -86,7 +86,7 @@ const ProductForm = ({ productId, onSave }) => {
                             value={form.type}
                             onChange={handleChange}
                             placeholder="Tipo"
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -98,12 +98,12 @@ const ProductForm = ({ productId, onSave }) => {
                             value={form.description}
                             onChange={handleChange}
                             placeholder="Descrição do Produto"
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                             rows={3}
                         />
                     </Form.Group>
 
-                    <Button variant="primary" type="submit" className="w-100">
+                    <Button variant="btn bg-ms-blue text-light" type="submit" className="w-100">
                         {productId ? 'Atualizar Produto' : 'Adicionar Produto'}
                     </Button>
                 </Form>

@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, deleteProduct } from '../services/api';
+import { getLocations, deleteLocation } from '../services/api';
 import { Table, Button, Card, Modal, Spinner } from 'react-bootstrap';
 
-const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
-    const [products, setProducts] = useState([]);
+const LocationList = ({ onEditLocation, onAddLocation }) => {
+    const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [productToDelete, setProductToDelete] = useState(null);
+    const [locationToDelete, setLocationToDelete] = useState(null);
 
     useEffect(() => {
-        loadProducts();
+        loadLocations();
     }, []);
 
-    // Carregar lista de produtos
-    const loadProducts = () => {
+    const loadLocations = () => {
         setLoading(true);
-        getProducts()
+        getLocations()
             .then((response) => {
-                setProducts(response.data);
+                setLocations(response.data);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
     };
 
-    // Exibir o modal de confirmação de exclusão
     const handleDelete = (id) => {
-        setProductToDelete(id);
+        setLocationToDelete(id);
         setShowDeleteModal(true);
     };
 
-    // Confirmar exclusão do produto
     const confirmDelete = () => {
-        deleteProduct(productToDelete)
+        deleteLocation(locationToDelete)
             .then(() => {
                 setShowDeleteModal(false);
-                loadProducts();
+                loadLocations();
             })
             .catch(() => setShowDeleteModal(false));
     };
@@ -42,58 +39,49 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
     return (
         <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
             <Card.Body>
-                <Card.Title className="text-center mb-4">Lista de Produtos</Card.Title> 
+                <Card.Title className="text-center mb-4">Locais de Armazenamento</Card.Title>
 
                 <Button
                     variant="btn bg-ms-blue text-light"
-                    onClick={onAddProduct}
+                    onClick={onAddLocation}
                     className="mb-3 w-100"
                 >
-                    Adicionar Novo Produto
-                </Button>               
+                    Adicionar Novo Local
+                </Button>
 
-                {/* Exibir loading enquanto carrega os produtos */}
                 {loading ? (
                     <div className="text-center my-4">
                         <Spinner animation="border" variant="light" />
-                        <p className="text-light mt-3">Carregando produtos...</p>
+                        <p className="text-light mt-3">Carregando locais...</p>
                     </div>
                 ) : (
                     <Table responsive bordered hover variant="dark" className="mt-3 table-rounded">
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Número de Registro</th>
+                                <th>Descrição</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.length > 0 ? (
-                                products.map((product) => (
-                                    <tr key={product.id}>
-                                        <td>{product.name}</td>
-                                        <td>{product.registration_number}</td>
+                            {locations.length > 0 ? (
+                                locations.map((location) => (
+                                    <tr key={location.id}>
+                                        <td>{location.name}</td>
+                                        <td>{location.description}</td>
                                         <td>
                                             <Button
                                                 variant="btn bg-ms-blue text-light"
                                                 size="sm"
                                                 className="me-2"
-                                                onClick={() => onSelectProduct(product.id)}
-                                            >
-                                                Ver
-                                            </Button>
-                                            <Button
-                                                variant="btn bg-ms-blue text-light"
-                                                size="sm"
-                                                className="me-2"
-                                                onClick={() => onEditProduct(product.id)}
+                                                onClick={() => onEditLocation(location.id)}
                                             >
                                                 Editar
                                             </Button>
                                             <Button
                                                 variant="btn bg-ms-blue text-light"
                                                 size="sm"
-                                                onClick={() => handleDelete(product.id)}
+                                                onClick={() => handleDelete(location.id)}
                                             >
                                                 Excluir
                                             </Button>
@@ -103,7 +91,7 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                             ) : (
                                 <tr>
                                     <td colSpan="3" className="text-center">
-                                        Nenhum produto encontrado.
+                                        Nenhum local encontrado.
                                     </td>
                                 </tr>
                             )}
@@ -112,7 +100,6 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                 )}
             </Card.Body>
 
-            {/* Modal de confirmação de exclusão */}
             <Modal
                 show={showDeleteModal}
                 onHide={() => setShowDeleteModal(false)}
@@ -123,7 +110,7 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Exclusão</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Tem certeza de que deseja excluir este produto?</Modal.Body>
+                <Modal.Body>Tem certeza de que deseja excluir este local de armazenamento?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                         Cancelar
@@ -137,4 +124,4 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
     );
 };
 
-export default ProductList;
+export default LocationList;
