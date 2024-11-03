@@ -1,10 +1,10 @@
 import datetime
-import os
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from fpdf import FPDF
 from config import Config
 from models import db, Product, Entry, Exit,Location
+from utils.pdf_gen import generate_management_report
 
 
 app = Flask(__name__)
@@ -169,47 +169,9 @@ def delete_location(location_id):
 
 # Rota para gerar um relatório PDF com todas as entradas e saídas
 @app.route('/api/report', methods=['GET'])
-def generate_report():
-    entries = Entry.query.all()  # Obtém todas as entradas do banco
-    exits = Exit.query.all()  # Obtém todas as saídas do banco
-
-    # Cria um novo PDF usando FPDF
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Relatório de Movimentação de Mercadorias", ln=True, align="C")
-    pdf.cell(200, 10, txt=" ", ln=True)  # Linha em branco para espaçamento
-
-    # Adiciona as entradas ao relatório PDF
-    pdf.cell(200, 10, txt="Entradas:", ln=True, align="L")
-    for entry in entries:
-        pdf.cell(
-            200, 10,
-            txt=f"Produto ID: {entry.product_id} | Quantidade: {entry.quantity} | Data: {entry.date_time.strftime('%Y-%m-%d %H:%M:%S')} | Local: {entry.location_id}",
-            ln=True
-        )
-
-    # Adiciona as saídas ao relatório PDF
-    pdf.cell(200, 10, txt=" ", ln=True)  # Linha em branco para espaçamento
-    pdf.cell(200, 10, txt="Saídas:", ln=True, align="L")
-    for exit in exits:
-        pdf.cell(
-            200, 10,
-            txt=f"Produto ID: {exit.product_id} | Quantidade: {exit.quantity} | Data: {exit.date_time.strftime('%Y-%m-%d %H:%M:%S')} | Local: {exit.location_id}",
-            ln=True
-        )
-
-    # Gera um nome de arquivo único com data e hora
-    now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    report_path = f"reports/Entry_and_Exits_Report_{now}.pdf"
-
-    # Garante que o diretório 'reports' existe
-    os.makedirs(os.path.dirname(report_path), exist_ok=True)
-
-    # Salva o PDF gerado no diretório especificado
-    pdf.output(report_path)
+def generate_report():    
 
     # Retorna o PDF como um arquivo para download
-    return send_file(report_path, as_attachment=True)
+    return send_file(generate_management_report(), as_attachment=True)
 # Rota para obter todas as movimentações de produtos (entradas e saídas) em ordem crescente de data
 
