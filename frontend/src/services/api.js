@@ -31,4 +31,11 @@ export const addExit = (exit) => api.post('/exits', exit);
 export const getMovements = () => api.get('/movements');
 
 // Função para gerar relatório de movimentações (entradas e saídas)
-export const generateReport = () => api.get('/report');
+export const generateReport = async () => await api.get('/report', {
+    responseType: 'blob',  // Importante: Define o tipo de resposta como blob para lidar com arquivos binários
+    headers: {
+        'Cache-Control': 'no-cache',  // Evita problemas de cachê
+        'Pragma': 'no-cache',
+        'Expires': '0',
+    }
+});

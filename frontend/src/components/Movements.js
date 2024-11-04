@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, getLocations, getMovements, generateReport } from '../services/api';
+import { getMovements, generateReport } from '../services/api';
 import { Table, Button, Card, Spinner } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+
 
 const Movements = ({ onAddEntry, onAddExit }) => {
     const [movements, setMovements] = useState([]);
@@ -15,22 +15,30 @@ const Movements = ({ onAddEntry, onAddExit }) => {
         setLoading(true);
         getMovements()
             .then((response) => {
-                const sortedMovements = response.data.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
-                setMovements(sortedMovements);
+                setMovements(response.data);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
     };
 
-    const handleGenerateReport = () => {
+    const handleGenerateReport = async () => {
         generateReport()
             .then((response) => {
+                
+                const now = new Date();
+                const formattedDate = now.toISOString().split('T')[0]; // Formato: yyyy-mm-dd
+                const formattedTime = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // Formato: hh-mm-ss
+
+                
+                const fileName = `Entries_and_Exits_Report_${formattedDate}_${formattedTime}.pdf`;               
                 const url = window.URL.createObjectURL(new Blob([response.data]));
+                console.log(response);
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'relatorio_movimentacoes.pdf');
+                link.setAttribute('download', fileName);
                 document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
             })
             .catch((error) => console.error("Erro ao gerar relatório:", error));
     };
@@ -47,9 +55,9 @@ const Movements = ({ onAddEntry, onAddExit }) => {
                     <Button variant="danger" onClick={onAddExit}>
                         Adicionar Saída
                     </Button>
-                    {/* <Button variant="primary" onClick={handleGenerateReport}>
+                    {<Button variant="primary" onClick={handleGenerateReport}>
                         Gerar Relatório
-                    </Button> */}
+                    </Button>}
                 </div>
 
                 {loading ? (
@@ -70,13 +78,13 @@ const Movements = ({ onAddEntry, onAddExit }) => {
                         </thead>
                         <tbody>
                             {movements.length > 0 ? (
-                                movements.map((movement) => (
-                                    <tr key={movement.id}>
-                                        <td>{movement.product.name}</td>
-                                        <td>{movement.type === 'entry' ? 'Entrada' : 'Saída'}</td>
+                                movements.map((movement,index) => (
+                                    <tr key={index}>
+                                        <td>{movement.product_name}</td>
+                                        <td>{movement.type}</td>
                                         <td>{movement.quantity}</td>
                                         <td>{new Date(movement.date_time).toLocaleString()}</td>
-                                        <td>{movement.location.name}</td>
+                                        <td>{movement.location_name}</td>
                                     </tr>
                                 ))
                             ) : (

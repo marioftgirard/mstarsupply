@@ -1,34 +1,13 @@
 from fpdf import FPDF
 import os
 import datetime
-from models import  Entry, Exit,Location
+from utils.movements_functions import movements as getMovements
 
 def generate_management_report():
     
-    entries = Entry.query.all()  # Obtém todas as entradas do banco
-    exits = Exit.query.all()  # Obtém todas as saídas do banco     
-
+    
     # Combina entradas e saídas em uma única lista de movimentações
-    movements = [
-        {
-            "type": "Entrada",
-            "product_name": entry.product.name,
-            "quantity": entry.quantity,
-            "date_time": entry.date_time,
-            "location_name": entry.location.name
-        } for entry in entries
-    ] + [
-        {
-            "type": "Saída",
-            "product_name": exit.product.name,
-            "quantity": exit.quantity,
-            "date_time": exit.date_time,
-            "location_name": exit.location.name
-        } for exit in exits
-    ]
-
-    # Ordena as movimentações por data em ordem crescente
-    movements.sort(key=lambda x: x['date_time'])
+    movements = getMovements()
 
     absolute_path = os.path.dirname(__file__) # Obtém o caminho absoluto original do arquivo Python
     assets_imgs_path = f'/assets/imgs/logo-white.png' # Define o caminho relativo da imagem logo 
@@ -72,7 +51,8 @@ def generate_management_report():
 
     # Gera um nome de arquivo único com data e hora
     now = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    report_path = f"/reports/Entries_and_Exits_Report_{now}.pdf"
+    file_name = f"Entries_and_Exits_Report_{now}.pdf"
+    report_path = f"/reports/" + file_name
 
     # Garante que o diretório 'reports' existe
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
@@ -80,4 +60,4 @@ def generate_management_report():
     # Salva o PDF gerado no diretório especificado
     pdf.output(report_path)
 
-    return report_path
+    return [report_path, file_name]

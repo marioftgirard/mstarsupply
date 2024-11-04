@@ -1,10 +1,10 @@
 import datetime
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from fpdf import FPDF
 from config import Config
-from models import db, Product, Entry, Exit,Location
+from models import StockBalance, db, Product, Entry, Exit,Location
 from utils.pdf_gen import generate_management_report
+from utils.movements_functions import movements
 
 
 app = Flask(__name__)
@@ -89,10 +89,19 @@ def add_entry():
     data = request.json
     new_entry = Entry(
         product_id=data['product_id'],
-        quantity=data['quantity'],
+        quantity=int(data['quantity']),
         date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),
         location_id=data['location_id']
     )
+
+    # Atualiza ou cria o saldo em StockBalance
+    stock_balance = StockBalance.query.filter_by(product_id=new_entry.product_id, location_id=new_entry.location_id).first()
+    if stock_balance:
+        stock_balance.balance += new_entry.quantity
+    else:
+        new_stock_balance = StockBalance(product_id=new_entry.product_id, location_id=new_entry.location_id, balance=new_entry.quantity)
+        db.session.add(new_stock_balance)
+    
     db.session.add(new_entry)
     db.session.commit()
     return jsonify({"message": "Entrada registrada com sucesso"}), 201
@@ -103,10 +112,31 @@ def add_exit():
     data = request.json
     new_exit = Exit(
         product_id=data['product_id'],  # Associa a saída ao produto pelo ID
-        quantity=data['quantity'],  # Quantidade de produtos saindo do estoque
+        quantity=int(data['quantity']),  # Quantidade de produtos saindo do estoque
         date_time=datetime.datetime.strptime(data['date_time'], '%Y-%m-%d %H:%M:%S'),  # Converte data para datetime
         location_id=data['location_id']
     )
+
+    # Verifica o saldo atual no StockBalance
+    stock_balance = StockBalance.query.filter_by(product_id=new_exit.product_id, location_id=new_exit.location_id).first()
+      
+    if not stock_balance or stock_balance.balance < new_exit.quantity:
+        all_balances = StockBalance.query.filter_by(product_id=new_exit.product_id).all()
+        balances_info = [
+            {                
+                "location_name": balance.location.name,
+                "available_balance": balance.balance
+            } for balance in all_balances
+        ]
+
+        return jsonify({
+            "error": "Saldo insuficiente para a saída neste local.",
+            "available_balances": balances_info if balances_info else "Não há saldo para este produto em nenhum local."
+        }), 400
+    
+    # Reduz o saldo
+    stock_balance.balance -= new_exit.quantity
+
     db.session.add(new_exit)
     db.session.commit()
     return jsonify({"message": "Saída registrada com sucesso"}), 201
@@ -171,7 +201,11 @@ def delete_location(location_id):
 @app.route('/api/report', methods=['GET'])
 def generate_report():    
 
+    [file, filename] = generate_management_report()
     # Retorna o PDF como um arquivo para download
-    return send_file(generate_management_report(), as_attachment=True)
-# Rota para obter todas as movimentações de produtos (entradas e saídas) em ordem crescente de data
+    return send_file(file, as_attachment=True, download_name = filename)
 
+# Rota para obter todas as movimentações de produtos (entradas e saídas) em ordem crescente de data
+@app.route('/api/movements', methods=['GET'])
+def get_movements(): 
+    return jsonify(movements())

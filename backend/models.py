@@ -42,3 +42,19 @@ class Exit(db.Model):
     date_time = db.Column(db.DateTime)  # Data e hora da saída
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)  # ID do local relacionado
     location = db.relationship("Location", lazy="select") # Definindo o relacionamento para o select
+
+# Modelo para a tabela 'stock_balances' que armazena os saldos de cada local de armazenamento por produto 
+class StockBalance(db.Model):
+    __tablename__ = 'stock_balances'
+    id = db.Column(db.Integer, primary_key=True) # ID único de cada saldo
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False) # ID do produto relacionado
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False) # ID do local relacionado
+    balance = db.Column(db.Integer, nullable=False, default=0) # Saldo
+
+    # Definir restrição de unicidade para garantir que cada produto tenha um único saldo por local
+    __table_args__ = (
+        db.UniqueConstraint('product_id', 'location_id', name='unique_product_location'),
+    )
+    
+    product = db.relationship("Product", backref="stock_balances")
+    location = db.relationship("Location", backref="stock_balances")
