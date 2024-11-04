@@ -12,6 +12,9 @@ class Product(db.Model):
     manufacturer = db.Column(db.String(255))  # Fabricante do produto
     type = db.Column(db.String(50))  # Tipo do produto
     description = db.Column(db.Text)  # Descrição detalhada do produto
+    entries = db.relationship("Entry", cascade="all,delete", backref="product_entries")
+    exits = db.relationship("Exit", cascade="all,delete", backref="product_exits")
+    balances = db.relationship("StockBalance", cascade="all,delete", backref="product_balances")
 
 
 # Modelo para a tabela 'locations' que guarda as informações sobre os locais de armazenamento
