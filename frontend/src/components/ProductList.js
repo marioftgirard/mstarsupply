@@ -75,7 +75,7 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                                         <td>{product.registration_number}</td>
                                         <td>
                                             <Button
-                                                variant="btn bg-ms-blue text-light"
+                                                variant="btn btn-success-ms text-light"
                                                 size="sm"
                                                 className="me-2"
                                                 onClick={() => onSelectProduct(product.id)}
@@ -83,7 +83,7 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                                                 Ver
                                             </Button>
                                             <Button
-                                                variant="btn bg-ms-blue text-light"
+                                                variant="btn btn-alert-ms text-light"
                                                 size="sm"
                                                 className="me-2"
                                                 onClick={() => onEditProduct(product.id)}
@@ -91,7 +91,7 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                                                 Editar
                                             </Button>
                                             <Button
-                                                variant="btn bg-ms-blue text-light"
+                                                variant="btn btn-danger-ms text-light"
                                                 size="sm"
                                                 onClick={() => handleDelete(product.id)}
                                             >

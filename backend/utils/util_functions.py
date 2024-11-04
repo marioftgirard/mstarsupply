@@ -1,4 +1,5 @@
-from models import  Entry, Exit
+from sqlalchemy import func
+from models import  Entry, Exit, Product,db,StockBalance
 
 def movements(options = None):
     
@@ -29,3 +30,12 @@ def movements(options = None):
 
    
     return movements
+
+def aggregated_balances():
+    product_balances = db.session.query(
+        StockBalance.product_id,
+        Product.name.label("product_name"),  # Acessa o nome do produto a partir da tabela Product
+        func.sum(StockBalance.balance).label("total_balance")
+    ).join(Product, StockBalance.product_id == Product.id).group_by(StockBalance.product_id, Product.name).all()
+
+    return product_balances

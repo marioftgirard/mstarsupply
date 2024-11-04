@@ -79,7 +79,7 @@ const AddEntry = ({ onSave }) => {
     };
 
     return (
-        <Card className="bg-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
+        <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
             <Card.Body>
                 <Card.Title className="text-center mb-4">Registrar Entrada de Produto</Card.Title>
 
@@ -94,7 +94,7 @@ const AddEntry = ({ onSave }) => {
                             value={form.product_id}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         >
                             <option value="">Selecione o produto</option>
                             {products.map((product) => (
@@ -115,7 +115,7 @@ const AddEntry = ({ onSave }) => {
                             onChange={handleChange}
                             placeholder="Quantidade"
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -127,7 +127,7 @@ const AddEntry = ({ onSave }) => {
                             value={form.date_time}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                             isInvalid={!!errors.date_time}
                         />
                         {errors.date_time && <Alert variant="danger">{errors.date_time}</Alert>}
@@ -141,7 +141,7 @@ const AddEntry = ({ onSave }) => {
                             value={form.location_id}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         >
                             <option value="">Selecione o local</option>
                             {locations.map((location) => (
@@ -152,7 +152,7 @@ const AddEntry = ({ onSave }) => {
                         </Form.Select>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit" className="w-100">
+                    <Button variant="btn bg-ms-blue text-light" type="submit" className="w-100">
                         Registrar Entrada
                     </Button>
                 </Form>

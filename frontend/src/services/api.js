@@ -30,6 +30,9 @@ export const addExit = (exit) => api.post('/exits', exit);
 // Função para obter todas as movimentações (entradas e saídas)
 export const getMovements = () => api.get('/movements');
 
+// Função para obter todos os saldos válidos
+export const getStockBalances = () => api.get('/stock_balances');
+
 // Função para gerar relatório de movimentações (entradas e saídas)
 export const generateReport = async () => await api.get('/report', {
     responseType: 'blob',  // Importante: Define o tipo de resposta como blob para lidar com arquivos binários

@@ -44,18 +44,18 @@ const Movements = ({ onAddEntry, onAddExit }) => {
     };
 
     return (
-        <Card className="bg-dark text-light p-4" style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '900px', margin: '0 auto' }}>
             <Card.Body>
                 <Card.Title className="text-center mb-4">Movimentações de Produtos</Card.Title>
 
                 <div className="d-flex justify-content-between mb-3">
-                    <Button variant="success" onClick={onAddEntry}>
+                    <Button variant="success-ms text-light" onClick={onAddEntry}>
                         Adicionar Entrada
                     </Button>
-                    <Button variant="danger" onClick={onAddExit}>
+                    <Button variant="danger-ms text-light" onClick={onAddExit}>
                         Adicionar Saída
                     </Button>
-                    {<Button variant="primary" onClick={handleGenerateReport}>
+                    {<Button variant="primary-ms text-light" onClick={handleGenerateReport}>
                         Gerar Relatório
                     </Button>}
                 </div>

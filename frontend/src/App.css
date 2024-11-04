@@ -21,6 +21,22 @@
   background-color: #3f3f3f;
 }
 
+.btn-primary-ms{
+  background-color: #1f879d;
+}
+
+.btn-danger-ms{
+  background-color: #843525;
+}
+
+.btn-alert-ms{
+  background-color: #847e25;
+}
+
+.btn-success-ms{
+  background-color: #19745b;
+}
+
 .App-header {
   background-color: #1f879d;
   display: flex;

@@ -77,7 +77,7 @@ const AddExit = ({ onSave }) => {
     };
 
     return (
-        <Card className="bg-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
+        <Card className="bg-ms-dark text-light p-4" style={{ maxWidth: '500px', margin: '0 auto' }}>
             <Card.Body>
                 <Card.Title className="text-center mb-4">Registrar Saída de Produto</Card.Title>
 
@@ -99,7 +99,7 @@ const AddExit = ({ onSave }) => {
                             value={form.product_id}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
 
                         >
                             <option value="">Selecione o produto</option>
@@ -121,7 +121,7 @@ const AddExit = ({ onSave }) => {
                             onChange={handleChange}
                             placeholder="Quantidade"
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         />
                     </Form.Group>
 
@@ -133,7 +133,7 @@ const AddExit = ({ onSave }) => {
                             value={form.date_time}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                             isInvalid={!!errors.date_time}
                         />
                         {errors.date_time && <Alert variant="danger" dismissible >{errors.date_time}</Alert>}
@@ -146,7 +146,7 @@ const AddExit = ({ onSave }) => {
                             value={form.location_id}
                             onChange={handleChange}
                             required
-                            className="bg-dark text-light border-secondary"
+                            className="border-secondary"
                         >
                             <option value="">Selecione o local</option>
                             {locations.map((location) => (
@@ -157,7 +157,7 @@ const AddExit = ({ onSave }) => {
                         </Form.Select>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit" className="w-100">
+                    <Button variant="btn bg-ms-blue text-light" type="submit" className="w-100">
                         Registrar Saída
                     </Button>
                 </Form>

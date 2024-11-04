@@ -71,7 +71,7 @@ const LocationList = ({ onEditLocation, onAddLocation }) => {
                                         <td>{location.description}</td>
                                         <td>
                                             <Button
-                                                variant="btn bg-ms-blue text-light"
+                                                variant="btn btn-alert-ms text-light"
                                                 size="sm"
                                                 className="me-2"
                                                 onClick={() => onEditLocation(location.id)}
@@ -79,7 +79,7 @@ const LocationList = ({ onEditLocation, onAddLocation }) => {
                                                 Editar
                                             </Button>
                                             <Button
-                                                variant="btn bg-ms-blue text-light"
+                                                variant="btn btn-danger-ms text-light"
                                                 size="sm"
                                                 onClick={() => handleDelete(location.id)}
                                             >

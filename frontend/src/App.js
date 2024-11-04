@@ -8,6 +8,7 @@ import Movements from './components/Movements';
 import AddEntry from './components/AddEntry';
 import AddExit from './components/AddExit';
 import { Container, Navbar, Nav } from 'react-bootstrap';
+import StockBalances from './components/StockBalances';
 
 function App() {
     const [view, setView] = useState('list');
@@ -100,10 +101,13 @@ function App() {
                     />
                 )}
                 {view === 'movements' && (
+                    <>
                     <Movements
                         onAddEntry={showAddEntry}
                         onAddExit={showAddExit}
                     />
+                    <StockBalances></StockBalances>
+                    </>
                 )}
                 {view === 'addEntry' && (
                     <AddEntry onSave={showMovements} />

@@ -4,7 +4,7 @@ from flask_cors import CORS
 from config import Config
 from models import StockBalance, db, Product, Entry, Exit,Location
 from utils.pdf_gen import generate_management_report
-from utils.movements_functions import movements
+from utils.util_functions import movements
 
 
 app = Flask(__name__)
@@ -209,3 +209,22 @@ def generate_report():
 @app.route('/api/movements', methods=['GET'])
 def get_movements(): 
     return jsonify(movements())
+
+# Rota para obter todas os saldos de produtos 
+@app.route('/api/stock_balances', methods=['GET'])
+def get_valid_stock_balances():
+    # Consulta todos os saldos válidos (com saldo maior que zero)
+    valid_balances = StockBalance.query.filter(StockBalance.balance > 0).all()
+
+    # Formata os resultados para JSON, incluindo informações de produto e local
+    balances_list = [
+        {
+            "product_id": balance.product_id,
+            "product_name": balance.product.name,
+            "location_id": balance.location_id,
+            "location_name": balance.location.name,
+            "balance": balance.balance
+        } for balance in valid_balances
+    ]
+
+    return jsonify(balances_list), 200
