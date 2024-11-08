@@ -123,7 +123,10 @@ const ProductList = ({ onSelectProduct, onAddProduct, onEditProduct }) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Exclusão</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Tem certeza de que deseja excluir este produto?</Modal.Body>
+                <Modal.Body>
+                    <p>Se você excluir este produto todas as movimentações e saldos existentes atrelados a ele também serão excluídos.</p>
+                    <p>Tem certeza que deseja excluí-lo?</p>
+                    </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                         Cancelar
